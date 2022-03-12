@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "UARTLib.h"
+#include "define.h"
 
 int initASYNC(int rate, int UARTReg, int UARTBaudRegList[6][4][2]){
 	UART.ubrr = F_CPU/(16*rate)-1;
@@ -30,12 +31,6 @@ int init(int mode, int baudRate, int UARTId){
 		return 0;
 	}
 	int (*initFuncs[4])(int rate, int UARTReg, int UARTBaudRegList[6][4][2]) = {initASYNC, initASYNC2X, initMASTER, initSLAVE};
-	int UARTBaudRateRegList[6][4][2] = {{{UBRR0L, UBRR0H},{UBRR1L, UBRR1H},{UBRR2L, UBRR2H},{UBRR3L, UBRR3H}}, 
-										{{UCSR0A}, {UCSR1A}, {UCSR2A}, {UCSR3A}}, 
-										{{UCSR0B}, {UCSR1B}, {UCSR2B}, {UCSR3B}}, 
-											{{UCSR0C}, {UCSR1C}, {UCSR2C}, {UCSR3C}}, 
-										{{TXEN0}, {TXEN1}, {TXEN2}, {TXEN3}}, 
-										{{RXEN0}, {RXEN1}, {RXEN2}, {RXEN3}}};
 	if((*initFuncs[mode])(baudRate, UARTId, UARTBaudRateRegList)){
 		
 	}
