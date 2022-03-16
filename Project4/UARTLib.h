@@ -9,8 +9,9 @@
 
 struct uart{
 	int ubrr;
+	int UARTReg;
 	int (*init)(int mode, int baudRate, int UARTId);
-	void (*transmit)();
+	void (*transmit)(char TransmitionData);
 };
 
 extern struct uart UART;

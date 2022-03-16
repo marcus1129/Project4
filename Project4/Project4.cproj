@@ -122,6 +122,9 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="define.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="define.h">
       <SubType>compile</SubType>
     </Compile>

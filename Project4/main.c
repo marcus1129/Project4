@@ -13,7 +13,7 @@ int main(void)
 {
 	UART.init(ASYNC, 19200, 0);
     while (1){
-		
+		UART.transmit('s');
     }
 }
 

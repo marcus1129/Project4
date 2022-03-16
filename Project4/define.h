@@ -1,14 +1,21 @@
 #ifndef DEFINE_H_
 #define DEFINE_H_
 
-#include <avr/io.h>
+#define UBBR 0
+#define L 0
+#define H 1
+#define UCSRA 1
+#define UCSRB 2
+#define UCSRC 3
+#define TXEN 4
+#define RXEN 5
+#define UCSZ 6
+#define UDR 7
+#define TXB8 8
 
-int UARTBaudRateRegList[6][4][2];
 
-UARTBaudRateRegList =	{{{UBRR0L, UBRR0H},{UBRR1L, UBRR1H},{UBRR2L, UBRR2H},{UBRR3L, UBRR3H}},
-						{{UCSR0A}, {UCSR1A}, {UCSR2A}, {UCSR3A}},
-						{{UCSR0B}, {UCSR1B}, {UCSR2B}, {UCSR3B}},
-						{{UCSR0C}, {UCSR1C}, {UCSR2C}, {UCSR3C}},
-						{{TXEN0}, {TXEN1}, {TXEN2}, {TXEN3}},
-						{{RXEN0}, {RXEN1}, {RXEN2}, {RXEN3}}};
+
+int UARTBaudRateRegList[96][4][3];
+void importRegs();
+
 #endif /* DEFINE_H_ */
