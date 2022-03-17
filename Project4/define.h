@@ -12,10 +12,14 @@
 #define UCSZ 6
 #define UDR 7
 #define TXB8 8
+#define RXCIE 9
+#define TXCIE 10
+#define RXC 11
+#define TXC 12
 
 
 
-int UARTBaudRateRegList[96][4][3];
+int UARTBaudRateRegList[13][4][3];
 void importRegs();
 
 #endif /* DEFINE_H_ */

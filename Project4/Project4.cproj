@@ -122,13 +122,22 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="define.c">
+    <Compile Include="data.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="define.h">
+    <Compile Include="I2C.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="I2C.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ssd1306.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ssd1306.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="UARTLib.c">
