@@ -13,8 +13,8 @@ struct uart{
 	volatile char RXh;
 	volatile char RXl;
 	volatile char RX;
-	int (*init)(int mode, int baudRate, int UARTId);
-	int (*transmitChar)(char transmitionData);
+	int (*UART_init)(int mode, int baudRate, int UARTId);
+	int (*UART_transmitChar)(char transmitionData);
 };
 
 extern struct uart UART;
