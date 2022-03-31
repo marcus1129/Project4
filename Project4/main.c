@@ -25,6 +25,7 @@ int main(void){
 	
 	char temp[10] = {' '};
     while (1){
+		CLOCK.clock_makeTimeStr();
 		UART.UART_transmitChar('s');
 		
 		sprintf(temp, "%d", CLOCK.hour);
@@ -39,19 +40,6 @@ int main(void){
 			clear_display();
 			CLOCK.interruptFlag = 0;
 		}
-		
-		
-		
-		/*CLOCK.clock_increment();
-		sprintf(temp1, "%d", CLOCK.second);
-		sprintf(temp2, "%d", CLOCK.minute);
-		sprintf(temp3, "%d", CLOCK.hour);
-		sendStrXY(UART.RX, 0, 0);
-		sendCharXY(':', 0, 2);
-		sendStrXY(UART.RX, 0, 3);
-		sendCharXY(':', 0, 5);
-		sendStrXY(UART.RX, 0, 6);
-		_delay_ms(1000);*/
     }
 }
 

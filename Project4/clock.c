@@ -11,6 +11,7 @@ int clock_init(){
 	CLOCK.hour = 0;
 	CLOCK.counter = 0;
 	CLOCK.interruptFlag = 1;
+	CLOCK.timeStr = NULL;
 	return 1;
 }
 
@@ -33,6 +34,47 @@ int clock_increment(){
 	else{
 		CLOCK.second += 1;
 	}
+	return 1;
+}
+
+int clock_makeTimeStr(){
+	if(CLOCK.timeStr == NULL){
+		CLOCK.timeStr = (char*)calloc(10, sizeof(char));
+	}
+	char tempHour[2];
+	char tempMinute[2];
+	char tempSecond[2];
+	if(CLOCK.hour >= 10){
+		tempHour[1] = CLOCK.hour%10;
+		tempHour[0] = (CLOCK.hour/10)%10;
+	} else{
+		tempHour[1] = CLOCK.hour%10;
+		tempHour[0] = '0';
+	}
+	if(CLOCK.minute >= 10){
+		tempMinute[1] = CLOCK.minute%10;
+		tempMinute[0] = (CLOCK.minute/10)%10;
+		} else{
+		tempMinute[1] = CLOCK.minute%10;
+		tempMinute[0] = '0';
+	}
+	if(CLOCK.second >= 10){
+		tempSecond[1] = CLOCK.second%10;
+		tempSecond[0] = (CLOCK.second/10)%10;
+		} else{
+		tempSecond[1] = CLOCK.second%10;
+		tempSecond[0] = '0';
+	}
+	CLOCK.timeStr[0] = tempHour[0];
+	CLOCK.timeStr[1] = tempHour[1];
+	CLOCK.timeStr[2] = ':';
+	CLOCK.timeStr[3] = tempMinute[0];
+	CLOCK.timeStr[4] = tempMinute[1];
+	CLOCK.timeStr[5] = ':';
+	CLOCK.timeStr[6] = tempSecond[0];
+	CLOCK.timeStr[7] = tempSecond[1];
+	CLOCK.timeStr[8] = '\n';
+	CLOCK.timeStr[9] = '\r';
 	return 1;
 }
 
@@ -100,7 +142,8 @@ int clock_enableTimerInterrupt(int timerId){
 struct clock CLOCK = {
 	.clock_init = clock_init,
 	.clock_increment = clock_increment,
-	.clock_enableTimerInterrupt = clock_enableTimerInterrupt
+	.clock_enableTimerInterrupt = clock_enableTimerInterrupt,
+	.clock_makeTimeStr = clock_makeTimeStr
 };
 
 

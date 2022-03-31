@@ -9,12 +9,14 @@
 struct clock{
 	volatile int counter;
 	volatile int interruptFlag;
+	char* timeStr;
 	int second;
 	int minute;
 	int hour;
 	int (*clock_enableTimerInterrupt)();
 	int (*clock_init)();
 	int (*clock_increment)();
+	int (*clock_makeTimeStr)();
 };
 
 extern struct clock CLOCK;
