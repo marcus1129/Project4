@@ -68,6 +68,9 @@ int UART_init(int mode, int baudRate, int UARTId){
 	UART.UARTReg = UARTId;
 	int (*UART_initAsyncFuncs[4])(int rate) = {UART_initASYNC0, UART_initASYNC1, UART_initASYNC2, UART_initASYNC3};
 	(*UART_initAsyncFuncs[UARTId])(baudRate);
+	UART.buffer = NULL;
+	UART.bufferIndex = 0;
+	UART.timeVal = NULL;
 	return 1;
 }
 
@@ -117,6 +120,13 @@ int UART_transmitChar(char transmitionData){
 	return 1;
 }
 
+int UART_transmitStr(char* transmitionData, int transmitionDataLength){
+	for(int i = 0; i < transmitionDataLength; i++){
+		UART_transmitChar(transmitionData[i]);
+	}
+	return 1;
+}
+
 int UART_receiveChar0(){
 	UART.RXh = UCSR0B;
 	UART.RXl = UDR0;
@@ -152,12 +162,18 @@ int UART_receiveChar3(){
 int UART_receiveChar(){
 	int(*UART_receiveCharFuncs[4])() = {UART_receiveChar0, UART_receiveChar1, UART_receiveChar2, UART_receiveChar3};
 	(*UART_receiveCharFuncs[UART.UARTReg])();
+	UART.buffer[UART.bufferIndex] = UART.RX;
+	if(UART.bufferIndex == 7){
+		UART.timeVal = UART.buffer;
+		UART.bufferIndex = 0;
+	}
 	return 1;
 }
 
 struct uart UART = {
 	.UART_init = UART_init,
 	.UART_transmitChar = UART_transmitChar,
+	.UART_transmitStr = UART_transmitStr
 };
 
 ISR(USART0_RX_vect){

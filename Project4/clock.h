@@ -17,6 +17,7 @@ struct clock{
 	int (*clock_init)();
 	int (*clock_increment)();
 	int (*clock_makeTimeStr)();
+	int (*clock_updateClock)(char* clockVal);
 };
 
 extern struct clock CLOCK;
