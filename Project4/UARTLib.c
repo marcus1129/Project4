@@ -2,22 +2,24 @@
 #include <avr/interrupt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "UARTLib.h"
 #include "I2C.h"  //include library for i2c driver
 #include "ssd1306.h" //include display driver
 #include <util/delay.h>
 
-int UART_initASYNC0(int rate){ //UARTBaudRegList is a list of register, see define.c and define.h
+volatile int gate = 0;
+
+int UART_initASYNC0(int rate){ 
 	UART.ubrr = F_CPU/(16*rate)-1;
-	UBRR0L = (unsigned char)(UART.ubrr>>8);
-	UBRR0H = (unsigned char)UART.ubrr;
-	UCSR0A |= (1<<RXC0);
-	UCSR0B |= (1<<RXCIE0)|(1<<RXEN0)|(1<<TXEN0)|(1<<UCSZ02);
+	UBRR0H = (unsigned char)((F_CPU/(16*rate)-1)>>8);
+	UBRR0L = (unsigned char)(F_CPU/(16*rate)-1);
+	UCSR0B |= (1<<RXCIE0)|(1<<TXCIE0)|(1<<RXEN0)|(1<<TXEN0);
 	UCSR0C |= (1<<UCSZ01)|(1<<UCSZ00);
 	return 1;
 };
 
-int UART_initASYNC1(int rate){ //UARTBaudRegList is a list of register, see define.c and define.h
+int UART_initASYNC1(int rate){ 
 	UART.ubrr = F_CPU/(16*rate)-1;
 	UBRR1L = (unsigned char)(UART.ubrr>>8);
 	UBRR1H = (unsigned char)UART.ubrr;
@@ -27,7 +29,7 @@ int UART_initASYNC1(int rate){ //UARTBaudRegList is a list of register, see defi
 	return 1;
 };
 
-int UART_initASYNC2(int rate){ //UARTBaudRegList is a list of register, see define.c and define.h
+int UART_initASYNC2(int rate){
 	UART.ubrr = F_CPU/(16*rate)-1;
 	UBRR2L = (unsigned char)(UART.ubrr>>8);
 	UBRR2H = (unsigned char)UART.ubrr;
@@ -37,7 +39,7 @@ int UART_initASYNC2(int rate){ //UARTBaudRegList is a list of register, see defi
 	return 1;
 };
 
-int UART_initASYNC3(int rate){ //UARTBaudRegList is a list of register, see define.c and define.h
+int UART_initASYNC3(int rate){
 	UART.ubrr = F_CPU/(16*rate)-1;
 	UBRR3L = (unsigned char)(UART.ubrr>>8);
 	UBRR3H = (unsigned char)UART.ubrr;
@@ -47,45 +49,31 @@ int UART_initASYNC3(int rate){ //UARTBaudRegList is a list of register, see defi
 	return 1;
 };
 
-/*int initASYNC2X(int rate, int UARTReg, int UARTBaudRegList[13][4][3]){
-	UART.ubrr = F_CPU/(8*rate)-1;
-	return 1;
-};
-
-int initMASTER(int rate, int UARTReg, int UARTBaudRegList[13][4][3]){
-	return 1;
-};
-
-int initSLAVE(int rate, int UARTReg, int UARTBaudRegList[13][4][3]){
-	return 1;
-};*/
-
 int UART_init(int mode, int baudRate, int UARTId){
 	if(UARTId > 3){
 		return 0;
 	}
 	sei();
 	UART.UARTReg = UARTId;
-	int (*UART_initAsyncFuncs[4])(int rate) = {UART_initASYNC0, UART_initASYNC1, UART_initASYNC2, UART_initASYNC3};
-	(*UART_initAsyncFuncs[UARTId])(baudRate);
-	UART.buffer = NULL;
+	/*int (*UART_initAsyncFuncs[4])(int rate) = {UART_initASYNC0, UART_initASYNC1, UART_initASYNC2, UART_initASYNC3};
+	(*UART_initAsyncFuncs[UARTId])(baudRate);*/
+	UART_initASYNC0(baudRate);
 	UART.bufferIndex = 0;
-	UART.timeVal = NULL;
+	strcpy(UART.timeVal, "");
+	strcpy(UART.buffer, "");
 	return 1;
 }
 
 int UART_transmitChar0(char transmitionData){
-	//while(~(UCSR0A & (1<<UDRE0))){}
-	UCSR0B &= ~(1<<TXB80);
-	if(transmitionData & 0x0100){
-		UCSR0B |= (1<<TXB80);
+	UDR0 = 0x31;
+	if(!gate){
+		UDR0 = 0x31;
+		gate = 1;
 	}
-	UDR0 = transmitionData;
 	return 1;
 };
 
 int UART_transmitChar1(char transmitionData){
-	//while(~(UCSR1A & (1<<UDRE1))){}
 	UCSR1B &= ~(1<<TXB81);
 	if(transmitionData & 0x0100){
 		UCSR1B |= (1<<TXB81);
@@ -95,7 +83,6 @@ int UART_transmitChar1(char transmitionData){
 };
 
 int UART_transmitChar2(char transmitionData){
-	//while(~(UCSR2A & (1<<UDRE2))){}
 	UCSR2B &= ~(1<<TXB82);
 	if(transmitionData & 0x0100){
 		UCSR2B |= (1<<TXB82);
@@ -105,7 +92,6 @@ int UART_transmitChar2(char transmitionData){
 };
 
 int UART_transmitChar3(char transmitionData){
-	//while(~(UCSR3A & (1<<UDRE3))){}
 	UCSR3B &= ~(1<<TXB83);
 	if(transmitionData & 0x0100){
 		UCSR3B |= (1<<TXB83);
@@ -115,23 +101,26 @@ int UART_transmitChar3(char transmitionData){
 };
 
 int UART_transmitChar(char transmitionData){
-	int (*UART_transmitCharFuncs[4])(char data) = {UART_transmitChar0, UART_transmitChar1, UART_transmitChar2, UART_transmitChar3};
-	(*UART_transmitCharFuncs[UART.UARTReg])(transmitionData);
+	/*int (*UART_transmitCharFuncs[4])(char data) = {UART_transmitChar0, UART_transmitChar1, UART_transmitChar2, UART_transmitChar3};
+	(*UART_transmitCharFuncs[UART.UARTReg])(transmitionData);*/
+	UART_transmitChar0('s');
 	return 1;
 }
 
-int UART_transmitStr(char* transmitionData, int transmitionDataLength){
-	for(int i = 0; i < transmitionDataLength; i++){
+int UART_transmitStr(char* transmitionData){
+	int i = 0;
+	while(transmitionData[i] != '\0'){
 		UART_transmitChar(transmitionData[i]);
+		i++;
 	}
 	return 1;
 }
 
 int UART_receiveChar0(){
-	UART.RXh = UCSR0B;
+	/*UART.RXh = UCSR0B;
 	UART.RXl = UDR0;
-	UART.RXh = (UART.RXh >> 1) & 0x01;
-	UART.RX = ((UART.RXh << 8) | UART.RXl);
+	UART.RXh = (UART.RXh >> 1) & 0x01;*/
+	UART.RX = /*((UART.RXh << 8) | UART.RXl)*/UDR0;
 	return 1;
 }
 
@@ -163,10 +152,11 @@ int UART_receiveChar(){
 	int(*UART_receiveCharFuncs[4])() = {UART_receiveChar0, UART_receiveChar1, UART_receiveChar2, UART_receiveChar3};
 	(*UART_receiveCharFuncs[UART.UARTReg])();
 	UART.buffer[UART.bufferIndex] = UART.RX;
-	if(UART.bufferIndex == 7){
-		UART.timeVal = UART.buffer;
+	if(UART.bufferIndex == 10){
+		strncpy(UART.timeVal, UART.buffer, 10);
 		UART.bufferIndex = 0;
 	}
+
 	return 1;
 }
 
@@ -178,16 +168,24 @@ struct uart UART = {
 
 ISR(USART0_RX_vect){
 	UART_receiveChar();
+	UART.bufferIndex += 1;
 };
 
 ISR(USART1_RX_vect){
 	UART_receiveChar();
+	UART.bufferIndex += 1;
 };
 
 ISR(USART2_RX_vect){
 	UART_receiveChar();
+	UART.bufferIndex += 1;
 };
 
 ISR(USART3_RX_vect){
 	UART_receiveChar();
+	UART.bufferIndex += 1;
 };
+
+ISR(USART0_TX_vect){
+	gate = 0;
+}

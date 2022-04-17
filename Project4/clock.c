@@ -166,6 +166,7 @@ struct clock CLOCK = {
 ISR(TIMER0_COMPA_vect){
 	CLOCK.counter += 1;
 	if(CLOCK.counter == 1000){
+		CLOCK.clock_makeTimeStr();
 		CLOCK.clock_increment();
 		CLOCK.interruptFlag = 1;
 		CLOCK.counter = 0;
@@ -175,6 +176,7 @@ ISR(TIMER0_COMPA_vect){
 ISR(TIMER1_COMPA_vect){
 	CLOCK.counter += 1;
 	if(CLOCK.counter == 1000){
+		CLOCK.clock_makeTimeStr();
 		CLOCK.clock_increment();
 		CLOCK.interruptFlag = 1;
 		CLOCK.counter = 0;
@@ -184,6 +186,7 @@ ISR(TIMER1_COMPA_vect){
 ISR(TIMER2_COMPA_vect){
 	CLOCK.counter += 1;
 	if(CLOCK.counter == 1000){
+		CLOCK.clock_makeTimeStr();
 		CLOCK.clock_increment();
 		CLOCK.interruptFlag = 1;
 		CLOCK.counter = 0;
@@ -193,6 +196,7 @@ ISR(TIMER2_COMPA_vect){
 ISR(TIMER3_COMPA_vect){
 	CLOCK.counter += 1;
 	if(CLOCK.counter == 1000){
+		CLOCK.clock_makeTimeStr();
 		CLOCK.clock_increment();
 		CLOCK.interruptFlag = 1;
 		CLOCK.counter = 0;
@@ -202,6 +206,7 @@ ISR(TIMER3_COMPA_vect){
 ISR(TIMER4_COMPA_vect){
 	CLOCK.counter += 1;
 	if(CLOCK.counter == 1000){
+		CLOCK.clock_makeTimeStr();
 		CLOCK.clock_increment();
 		CLOCK.interruptFlag = 1;
 		CLOCK.counter = 0;

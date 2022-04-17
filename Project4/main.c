@@ -21,6 +21,8 @@ void initExternalInterrupt(){
 	sei();
 }
 
+volatile int gate1 = 0;
+
 int main(void){
 	_i2c_address = 0X78;
 	I2C_Init();
@@ -30,15 +32,20 @@ int main(void){
 	
 	CLOCK.clock_init();
 	CLOCK.clock_enableTimerInterrupt(0);
-	UART.UART_init(ASYNC, 19200, 1);
+	UART.UART_init(ASYNC, 19200, 0);
 	initExternalInterrupt();
-	
+	UART.UART_transmitStr("To set the clock, enter a time in the format: \"hh:mm:ss\" and press the button.");
+	_delay_ms(1000);
     while (1){
 		CLOCK.clock_makeTimeStr();
-		UART.UART_transmitStr(/*CLOCK.timeStr*/"01:10:20", 10);
-		
+		//UART.UART_transmitStr(CLOCK.timeStr);
 		for(int i = 0; i < 8; i++){
+			UART.UART_transmitChar('w');
 			sendCharXY(CLOCK.timeStr[i], 0, i);
+		}
+		if(gate1){
+			CLOCK.clock_updateClock(UART.timeVal);
+			gate1 = 0;
 		}
 		if(CLOCK.interruptFlag){
 			clear_display();
@@ -48,5 +55,5 @@ int main(void){
 }
 
 ISR(INT4_vect){
-	CLOCK.clock_updateClock(UART.timeVal);
+	gate1 = 1;
 }
