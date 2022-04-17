@@ -40,8 +40,7 @@ C_SRCS +=  \
 ../clock.c \
 ../I2C.c \
 ../main.c \
-../ssd1306.c \
-../UARTLib.c
+../ssd1306.c
 
 
 PREPROCESSING_SRCS += 
@@ -54,29 +53,25 @@ OBJS +=  \
 clock.o \
 I2C.o \
 main.o \
-ssd1306.o \
-UARTLib.o
+ssd1306.o
 
 OBJS_AS_ARGS +=  \
 clock.o \
 I2C.o \
 main.o \
-ssd1306.o \
-UARTLib.o
+ssd1306.o
 
 C_DEPS +=  \
 clock.d \
 I2C.d \
 main.d \
-ssd1306.d \
-UARTLib.d
+ssd1306.d
 
 C_DEPS_AS_ARGS +=  \
 clock.d \
 I2C.d \
 main.d \
-ssd1306.d \
-UARTLib.d
+ssd1306.d
 
 OUTPUT_FILE_PATH +=Project4.elf
 
@@ -114,13 +109,6 @@ LINKER_SCRIPT_DEP+=
 	
 
 ./ssd1306.o: .././ssd1306.c
-	@echo Building file: $<
-	@echo Invoking: AVR/GNU C Compiler : 5.4.0
-	$(QUOTE)E:\MicrochipStudio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"E:\MicrochipStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g2 -Wall -mmcu=atmega2560 -B "E:\MicrochipStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega2560" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
-	@echo Finished building: $<
-	
-
-./UARTLib.o: .././UARTLib.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
 	$(QUOTE)E:\MicrochipStudio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"E:\MicrochipStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g2 -Wall -mmcu=atmega2560 -B "E:\MicrochipStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega2560" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

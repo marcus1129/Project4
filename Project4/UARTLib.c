@@ -20,8 +20,8 @@ char RX;
 
 int UART_initASYNC0(int rate){ 
 	ubrr = F_CPU/(16*rate)-1;
-	UBRR0H = (unsigned char)((F_CPU/(16*rate)-1)>>8);
-	UBRR0L = (unsigned char)(F_CPU/(16*rate)-1);
+	UBRR0H = (unsigned char)(ubrr>>8);
+	UBRR0L = (unsigned char)ubrr;
 	UCSR0B |= (1<<RXCIE0)|(1<<TXCIE0)|(1<<RXEN0)|(1<<TXEN0);
 	UCSR0C |= (1<<UCSZ01)|(1<<UCSZ00);
 	return 1;

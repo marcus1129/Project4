@@ -10,5 +10,3 @@ main.c
 
 ssd1306.c
 
-UARTLib.c
-
