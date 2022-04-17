@@ -9,9 +9,17 @@
 #include <util/delay.h>
 
 volatile int gate = 0;
+volatile int bufferIndex = 0;
+int ubrr;
+int UARTReg;
+char buffer[10];
+char timeVal[10];
+char RXh;
+char RXl;
+char RX;
 
 int UART_initASYNC0(int rate){ 
-	UART.ubrr = F_CPU/(16*rate)-1;
+	ubrr = F_CPU/(16*rate)-1;
 	UBRR0H = (unsigned char)((F_CPU/(16*rate)-1)>>8);
 	UBRR0L = (unsigned char)(F_CPU/(16*rate)-1);
 	UCSR0B |= (1<<RXCIE0)|(1<<TXCIE0)|(1<<RXEN0)|(1<<TXEN0);
@@ -20,9 +28,9 @@ int UART_initASYNC0(int rate){
 };
 
 int UART_initASYNC1(int rate){ 
-	UART.ubrr = F_CPU/(16*rate)-1;
-	UBRR1L = (unsigned char)(UART.ubrr>>8);
-	UBRR1H = (unsigned char)UART.ubrr;
+	ubrr = F_CPU/(16*rate)-1;
+	UBRR1L = (unsigned char)(ubrr>>8);
+	UBRR1H = (unsigned char)ubrr;
 	UCSR1A |= (1<<RXC1);
 	UCSR1B |= (1<<RXCIE1)|(1<<RXEN1)|(1<<TXEN1)|(1<<UCSZ12);
 	UCSR1C |= (1<<UCSZ11)|(1<<UCSZ10);
@@ -30,9 +38,9 @@ int UART_initASYNC1(int rate){
 };
 
 int UART_initASYNC2(int rate){
-	UART.ubrr = F_CPU/(16*rate)-1;
-	UBRR2L = (unsigned char)(UART.ubrr>>8);
-	UBRR2H = (unsigned char)UART.ubrr;
+	ubrr = F_CPU/(16*rate)-1;
+	UBRR2L = (unsigned char)(ubrr>>8);
+	UBRR2H = (unsigned char)ubrr;
 	UCSR2A |= (1<<RXC2);
 	UCSR2B |= (1<<RXCIE2)|(1<<RXEN2)|(1<<TXEN2)|(1<<UCSZ22);
 	UCSR2C |= (1<<UCSZ21)|(1<<UCSZ20);
@@ -40,9 +48,9 @@ int UART_initASYNC2(int rate){
 };
 
 int UART_initASYNC3(int rate){
-	UART.ubrr = F_CPU/(16*rate)-1;
-	UBRR3L = (unsigned char)(UART.ubrr>>8);
-	UBRR3H = (unsigned char)UART.ubrr;
+	ubrr = F_CPU/(16*rate)-1;
+	UBRR3L = (unsigned char)(ubrr>>8);
+	UBRR3H = (unsigned char)ubrr;
 	UCSR3A |= (1<<RXC1);
 	UCSR3B |= (1<<RXCIE3)|(1<<RXEN3)|(1<<TXEN3)|(1<<UCSZ32);
 	UCSR3C |= (1<<UCSZ31)|(1<<UCSZ30);
@@ -54,13 +62,13 @@ int UART_init(int mode, int baudRate, int UARTId){
 		return 0;
 	}
 	sei();
-	UART.UARTReg = UARTId;
+	UARTReg = UARTId;
 	/*int (*UART_initAsyncFuncs[4])(int rate) = {UART_initASYNC0, UART_initASYNC1, UART_initASYNC2, UART_initASYNC3};
 	(*UART_initAsyncFuncs[UARTId])(baudRate);*/
 	UART_initASYNC0(baudRate);
-	UART.bufferIndex = 0;
-	strcpy(UART.timeVal, "");
-	strcpy(UART.buffer, "");
+	bufferIndex = 0;
+	strcpy(timeVal, "");
+	strcpy(buffer, "");
 	return 1;
 }
 
@@ -120,70 +128,70 @@ int UART_receiveChar0(){
 	/*UART.RXh = UCSR0B;
 	UART.RXl = UDR0;
 	UART.RXh = (UART.RXh >> 1) & 0x01;*/
-	UART.RX = /*((UART.RXh << 8) | UART.RXl)*/UDR0;
+	RX = /*((UART.RXh << 8) | UART.RXl)*/UDR0;
 	return 1;
 }
 
 int UART_receiveChar1(){
-	UART.RXh = UCSR1B;
-	UART.RXl = UDR1;
-	UART.RXh = (UART.RXh >> 1) & 0x01;
-	UART.RX = ((UART.RXh << 8) | UART.RXl);
+	RXh = UCSR1B;
+	RXl = UDR1;
+	RXh = (RXh >> 1) & 0x01;
+	RX = ((RXh << 8) | RXl);
 	return 1;
 }
 
 int UART_receiveChar2(){
-	UART.RXh = UCSR2B;
-	UART.RXl = UDR2;
-	UART.RXh = (UART.RXh >> 1) & 0x01;
-	UART.RX = ((UART.RXh << 8) | UART.RXl);
+	RXh = UCSR2B;
+	RXl = UDR2;
+	RXh = (RXh >> 1) & 0x01;
+	RX = ((RXh << 8) | RXl);
 	return 1;
 }
 
 int UART_receiveChar3(){
-	UART.RXh = UCSR3B;
-	UART.RXl = UDR3;
-	UART.RXh = (UART.RXh >> 1) & 0x01;
-	UART.RX = ((UART.RXh << 8) | UART.RXl);
+	RXh = UCSR3B;
+	RXl = UDR3;
+	RXh = (RXh >> 1) & 0x01;
+	RX = ((RXh << 8) | RXl);
 	return 1;
 }
 
 int UART_receiveChar(){
 	int(*UART_receiveCharFuncs[4])() = {UART_receiveChar0, UART_receiveChar1, UART_receiveChar2, UART_receiveChar3};
-	(*UART_receiveCharFuncs[UART.UARTReg])();
-	UART.buffer[UART.bufferIndex] = UART.RX;
-	if(UART.bufferIndex == 10){
-		strncpy(UART.timeVal, UART.buffer, 10);
-		UART.bufferIndex = 0;
+	(*UART_receiveCharFuncs[UARTReg])();
+	buffer[bufferIndex] = RX;
+	if(bufferIndex == 10){
+		strncpy(timeVal, buffer, 10);
+		bufferIndex = 0;
 	}
 
 	return 1;
 }
 
-struct uart UART = {
+/*struct uart UART = {
 	.UART_init = UART_init,
 	.UART_transmitChar = UART_transmitChar,
 	.UART_transmitStr = UART_transmitStr
-};
+};*/
 
 ISR(USART0_RX_vect){
 	UART_receiveChar();
-	UART.bufferIndex += 1;
+	bufferIndex += 1;
 };
 
 ISR(USART1_RX_vect){
 	UART_receiveChar();
-	UART.bufferIndex += 1;
+	bufferIndex += 1;
 };
 
 ISR(USART2_RX_vect){
 	UART_receiveChar();
-	UART.bufferIndex += 1;
+	bufferIndex += 1;
 };
 
 ISR(USART3_RX_vect){
 	UART_receiveChar();
-	UART.bufferIndex += 1;
+	bufferIndex += 1;
 };
 
 ISR(USART0_TX_vect){

@@ -7,21 +7,23 @@
 #define USARTSLAVE 3
 #define F_CPU 16000000UL
 
-struct uart{
-	int ubrr;
-	int UARTReg;
-	int bufferIndex;
-	char buffer[10];
-	char timeVal[10];
-	char RXh;
-	char RXl;
-	char RX;
-	int (*UART_init)(int mode, int baudRate, int UARTId);
+//struct uart{
+	extern int ubrr;
+	extern int UARTReg;
+	extern char buffer[10];
+	extern char timeVal[10];
+	extern char RXh;
+	extern char RXl;
+	extern char RX;
+	extern int UART_init(int mode, int baudRate, int UARTId);
+	extern int UART_transmitChar(char transmitionData);
+	extern int UART_transmitStr(char* transmitionData);
+	/*int (*UART_init)(int mode, int baudRate, int UARTId);
 	int (*UART_transmitChar)(char transmitionData);
-	int (*UART_transmitStr)(char* transmitionData);
-};
+	int (*UART_transmitStr)(char* transmitionData);*/
+//};
 
-extern struct uart UART;
+//extern struct uart UART;
 
 
 
