@@ -40,7 +40,7 @@ int clock_increment(){
 
 int clock_makeTimeStr(){
 	if(CLOCK.timeStr == NULL){
-		CLOCK.timeStr = (char*)calloc(10, sizeof(char));
+		CLOCK.timeStr = (char*)calloc(9, sizeof(char));
 	}
 	char tempHour[2];
 	char tempMinute[2];
@@ -74,8 +74,7 @@ int clock_makeTimeStr(){
 	CLOCK.timeStr[5] = ':';
 	CLOCK.timeStr[6] = tempSecond[0];
 	CLOCK.timeStr[7] = tempSecond[1];
-	CLOCK.timeStr[8] = '\n';
-	CLOCK.timeStr[9] = '\r';
+	CLOCK.timeStr[8] = '\0';
 	return 1;
 }
 
